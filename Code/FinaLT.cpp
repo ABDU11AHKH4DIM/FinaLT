@@ -1,8 +1,9 @@
-	#include <iostream>
-	#include <string>
-	#include <vector>
-	#include <cctype>
-	#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <cctype>
+#include <algorithm>
+#include <deque>
 	
 	//FUNCTIONS
 	std::string tolowerString(std::string str)
@@ -65,6 +66,11 @@
 				}
 			}
 			
+			void pushTransaction(Transactions* t)
+			{
+				transactionVctr.push_back(t);
+			}
+						
 			void addTransaction()
 			{
 				std::string name, details;
@@ -81,10 +87,10 @@
 				
 				Transactions* t = new Transactions(name, amount, details);
 				
-				transactionVctr.push_back(t); // DO NOT FORGET TO USE DELETE
+				pushTransaction(t); // DO NOT FORGET TO USE DELETE
 			}
 			
-			Transactions* findTransaction(std::string name)  // to search if a category already exists
+			Transactions* findTransaction(std::string name)  // to search if a transaction already exists
 			{
 				for (Transactions* t : transactionVctr)
 				{
@@ -95,12 +101,15 @@
 				return nullptr; // not found, i.e; create new category
 			}
 			
-			void deleteTransaction(Transactions* t)
+			void removeTransaction(Transactions* t) // this method is required for undo because it does NOT delete the object itself
 			{
 				transactionVctr.erase(std::remove(transactionVctr.begin(), transactionVctr.end(), t), transactionVctr.end());  // erase-remove idiom. std::remove shifts (removes) all the occurrences of 't' to the end, and .erase deletes them from the vector. std::remove itself only makes the value unspecified state, it does not deallocate memory
-				
+			}
+			
+			void deleteTransaction(Transactions* t)
+			{
+				removeTransaction(t);
 				delete t;
-				
 			}
 	};
 	
@@ -142,6 +151,36 @@
 			}
 	};
 	
+	class Command
+{
+	public:
+		virtual void execute() = 0;
+		
+		virtual void undo() = 0;
+		
+		virtual ~Command() {};
+};
+
+class AddTransactionCommand : public Command
+{
+    private:
+        Category* receiver;      // the object that does the actual work
+        Transactions* transaction; // the data needed to do and undo
+    
+    public:
+        AddTransactionCommand(Category* cat, Transactions* t) : receiver(cat), transaction(t) {}
+        
+        void execute() override
+        {
+            receiver->pushTransaction(transaction);
+        }
+        
+        void undo() override  // override tells the compiler that this method is defining a virtual method of a parent class, and that its not a new method. so if no matching method is found, an error will be thrown
+        {
+            receiver->removeTransaction(transaction);
+        }
+};
+	
 	/* the singleton
 	excerpt from Refactoring Guru:
 	All implementations of the Singleton have these two steps in common:
@@ -154,8 +193,11 @@
 	class BudgetManager
 	{
 		private:
-			BudgetManager() { std::cout << "Called\n";};
+			BudgetManager() { std::cout << "Called\n";}; // private constructor to prevent initialization in main()
 			std::vector <Budget*> budgetVctr;  // vector to store pointers to 'Budget' objects
+			std::deque <Command*> undoStack;
+			std::deque <Command*> redoStack;
+			const int MAX_UNDO = 10;
 			
 			BudgetManager(const BudgetManager&) = delete;  // deleting copy constructor
 			BudgetManager& operator=(const BudgetManager&) = delete; // deleting assignment operator
