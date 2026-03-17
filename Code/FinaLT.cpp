@@ -4,7 +4,6 @@
 	#include <cctype>
 	#include <algorithm>
 	
-	class Category; // forward decalaration, because 'Category' is used before it is defined in 'Transactions', line 14
 	//FUNCTIONS
 	std::string tolowerString(std::string str)
 	{
@@ -28,7 +27,7 @@
 		public:
 			Transactions(std::string name, double amount, std::string details/*, date and time*/) : amount(amount), name(name), details(details) {}
 			
-			double getAmount()  // in order to updating/editing
+			double getAmount()
 			{
 				return amount;
 			}
@@ -36,6 +35,11 @@
 			std::string getName()
 			{
 				return name;
+			}
+			
+			std::string getDetails()
+			{
+				return details;
 			}
 	};
 	
@@ -334,5 +338,4 @@
 					std::cout << "\nINVALID INPUT!";
 			}
 		}
-		
 	}
