@@ -52,13 +52,13 @@
 		
 		public:
 			Category(std::string name) : name(name){}
-//			~Category()
-//			{
-//				for (Transactions* t : transactionVctr)
-//				{
-//					delete t;
-//				}
-//			}
+			~Category()
+			{
+				for (Transactions* t : transactionVctr)
+				{
+					delete t;
+				}
+			}
 			
 			std::string getName()
 			{
@@ -182,10 +182,10 @@ class AddTransactionCommand : public Command    // concrete command
     
     public:
         AddTransactionCommand(Category* cat, Transactions* t) : receiver(cat), transaction(t) {}
-        ~AddTransactionCommand() // Command owns transaction, not category
-        {
-        	delete transaction;
-		}
+//        ~AddTransactionCommand() // Command owns transaction, not category
+//        {
+//        	delete transaction;
+//		}
         
         void execute() override
         {
@@ -270,6 +270,11 @@ class AddTransactionCommand : public Command    // concrete command
 				}
 				
 				undoStack.push_back(cmd);
+				
+				for (auto c : redoStack)
+					delete c;
+				
+				redoStack.clear();
 				// add redo logic
 			}
 			
@@ -284,7 +289,7 @@ class AddTransactionCommand : public Command    // concrete command
 				Command* cmd = undoStack.back();	 // assigning the last action performed (ie; object) to a locally created pointer to Command object
 				cmd->undo();						 // then calling undo through that object
 				undoStack.pop_back(); 			   	 // removing it from the undo list
-				redoStack.push_back();				 // adding to redo list
+				redoStack.push_back(cmd);				 // adding to redo list
 				// redo satck push back
 			}
 	};
