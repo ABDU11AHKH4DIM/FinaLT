@@ -44,7 +44,7 @@
 			}
 	};
 	
-	class Category
+	class Category  // RECEIVER
 	{
 		private:
 			std::string name;
@@ -71,7 +71,7 @@
 				transactionVctr.push_back(t);
 			}
 						
-			void addTransaction()
+			Transactions* inputTransaction()
 			{
 				std::string name, details;
 				double amount;
@@ -85,9 +85,9 @@
 				std::cout << "\nEnter details: " << std::endl;
 				std::cin >> details;
 				
-				Transactions* t = new Transactions(name, amount, details);
+				Transactions* t = new Transactions(name, amount, details); // DO NOT FORGET TO USE DELETE
 				
-				pushTransaction(t); // DO NOT FORGET TO USE DELETE
+				return t;
 			}
 			
 			Transactions* findTransaction(std::string name)  // to search if a transaction already exists
@@ -151,17 +151,16 @@
 			}
 	};
 	
-	class Command
+class Command  // base command
 {
 	public:
-		virtual void execute() = 0;
-		
-		virtual void undo() = 0;
+		virtual void execute()	= 0;
+		virtual void undo()		= 0;
 		
 		virtual ~Command() {};
 };
 
-class AddTransactionCommand : public Command
+class AddTransactionCommand : public Command    // concrete command
 {
     private:
         Category* receiver;      // the object that does the actual work
@@ -190,14 +189,14 @@ class AddTransactionCommand : public Command
 	
 	If your code has access to the Singleton class, then it’s able to call the Singleton’s static method. So whenever that method is called, the same object is always returned. */
 	
-	class BudgetManager
+	class BudgetManager  // INVOKER for command pattern
 	{
 		private:
 			BudgetManager() { std::cout << "Called\n";}; // private constructor to prevent initialization in main()
 			std::vector <Budget*> budgetVctr;  // vector to store pointers to 'Budget' objects
 			std::deque <Command*> undoStack;
 			std::deque <Command*> redoStack;
-			const int MAX_UNDO = 10;
+			const int MAX_UNDO	= 10;
 			
 			BudgetManager(const BudgetManager&) = delete;  // deleting copy constructor
 			BudgetManager& operator=(const BudgetManager&) = delete; // deleting assignment operator
@@ -233,6 +232,34 @@ class AddTransactionCommand : public Command
 				
 				else
 					std::cout << "\nBudget already exists!";  // i may need to remove this if else checking because its not this methods job
+			}
+			
+			void executeCommand(Command* cmd)
+			{
+				cmd->execute();
+				
+				if (undoStack.size() >= MAX_UNDO)
+				{
+					delete undoStack.front();  // this deletes the pointer
+					undoStack.pop_front();
+				}
+				
+				undoStack.push_back(cmd);
+				// add redo logic
+			}
+			
+			void undo()
+			{
+				if (undoStack.empty())
+				{
+					std::cout << "\nNothing to undo!";
+					return;
+				}
+				
+				Command* cmd = undoStack.back(); // assigning the last action performed (ie; object) to a locally created pointer to Command object
+				cmd->undo(); // then calling undo through that object
+				undoStack.pop_back(); // removing it from the undo history
+				// redo satck push back
 			}
 	};
 	
@@ -276,7 +303,10 @@ class AddTransactionCommand : public Command
 						
 						if (c != nullptr)
 						{
-							c->addTransaction();
+							Transactions* t = c->inputTransaction();
+							
+							Command* cmd = new AddTransactionCommand(c, t);
+							manager.executeCommand(cmd); // adding the transaction to transactionVctr and pushing it onto undoStack
 						}						
 					
 						else
