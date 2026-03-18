@@ -52,6 +52,13 @@
 		
 		public:
 			Category(std::string name) : name(name){}
+//			~Category()
+//			{
+//				for (Transactions* t : transactionVctr)
+//				{
+//					delete t;
+//				}
+//			}
 			
 			std::string getName()
 			{
@@ -124,6 +131,13 @@
 			
 		public:
 			Budget(std::string name, double limit) : name(name), limit(limit) {}
+			~Budget()
+			{
+				for (Category* c : categoryVctr)
+				{
+					delete c;
+				}
+			}
 			
 			std::string getName()
 			{
@@ -168,6 +182,10 @@ class AddTransactionCommand : public Command    // concrete command
     
     public:
         AddTransactionCommand(Category* cat, Transactions* t) : receiver(cat), transaction(t) {}
+        ~AddTransactionCommand() // Command owns transaction, not category
+        {
+        	delete transaction;
+		}
         
         void execute() override
         {
@@ -202,6 +220,13 @@ class AddTransactionCommand : public Command    // concrete command
 			BudgetManager& operator=(const BudgetManager&) = delete; // deleting assignment operator
 			
 		public:
+			~BudgetManager()
+			{
+				for (Budget* b : budgetVctr)
+				{
+					delete b;
+				}
+			}
 			static BudgetManager& getInstance()  // a static mathod to call for
 			{
 				static BudgetManager instance;  // static ensures that its created only once along with the private constructor
@@ -256,9 +281,10 @@ class AddTransactionCommand : public Command    // concrete command
 					return;
 				}
 				
-				Command* cmd = undoStack.back(); // assigning the last action performed (ie; object) to a locally created pointer to Command object
-				cmd->undo(); // then calling undo through that object
-				undoStack.pop_back(); // removing it from the undo history
+				Command* cmd = undoStack.back();	 // assigning the last action performed (ie; object) to a locally created pointer to Command object
+				cmd->undo();						 // then calling undo through that object
+				undoStack.pop_back(); 			   	 // removing it from the undo list
+				redoStack.push_back();				 // adding to redo list
 				// redo satck push back
 			}
 	};
@@ -305,7 +331,7 @@ class AddTransactionCommand : public Command    // concrete command
 						{
 							Transactions* t = c->inputTransaction();
 							
-							Command* cmd = new AddTransactionCommand(c, t);
+							Command* cmd = new AddTransactionCommand(c, t);  // this cmd is deleted in undo() inside BudgetManager
 							manager.executeCommand(cmd); // adding the transaction to transactionVctr and pushing it onto undoStack
 						}						
 					
