@@ -52,13 +52,6 @@
 		
 		public:
 			Category(std::string name) : name(name){}
-			~Category()
-			{
-				for (Transactions* t : transactionVctr)
-				{
-					delete t;
-				}
-			}
 			
 			std::string getName()
 			{
@@ -69,7 +62,7 @@
 			{
 				for (auto x : transactionVctr)
 				{
-					std::cout << x->getName() << "\n";
+					std::cout << "\n" << x->getName() << "\n";
 				}
 			}
 			
@@ -112,13 +105,7 @@
 			{
 				transactionVctr.erase(std::remove(transactionVctr.begin(), transactionVctr.end(), t), transactionVctr.end());  // erase-remove idiom. std::remove shifts (removes) all the occurrences of 't' to the end, and .erase deletes them from the vector. std::remove itself only makes the value unspecified state, it does not deallocate memory
 			}
-			
-			void deleteTransaction(Transactions* t)
-			{
-				removeTransaction(t);
-				delete t;
-			}
-	};
+};
 	
 	class Budget // for multiple budgets
 	{
@@ -182,10 +169,10 @@ class AddTransactionCommand : public Command    // concrete command
     
     public:
         AddTransactionCommand(Category* cat, Transactions* t) : receiver(cat), transaction(t) {}
-//        ~AddTransactionCommand() // Command owns transaction, not category
-//        {
-//        	delete transaction;
-//		}
+        ~AddTransactionCommand()
+        {
+        	delete transaction;
+		}
         
         void execute() override
         {
@@ -196,6 +183,30 @@ class AddTransactionCommand : public Command    // concrete command
         {
             receiver->removeTransaction(transaction);
         }
+};
+class DeleteTransactionCommand : public Command
+{
+	private:
+		Category* receiver;
+		Transactions* transaction;
+		
+	public:
+		DeleteTransactionCommand(Category* c, Transactions* t) : receiver(c), transaction(t) {}
+		~DeleteTransactionCommand()
+		{
+			delete transaction;		
+		}
+		
+		void execute() override
+		{
+			receiver->removeTransaction(transaction);
+		}
+		
+		void undo() override
+		{
+			receiver->pushTransaction(transaction);
+		}
+		
 };
 	
 	/* the singleton
@@ -210,22 +221,23 @@ class AddTransactionCommand : public Command    // concrete command
 	class BudgetManager  // INVOKER for command pattern
 	{
 		private:
-			BudgetManager() { std::cout << "Called\n";}; // private constructor to prevent initialization in main()
-			std::vector <Budget*> budgetVctr;  // vector to store pointers to 'Budget' objects
+			BudgetManager() { std::cout << "Called\n";}		// private constructor to prevent initialization in main()
+			std::vector <Budget*> budgetVctr;				// vector to store pointers to 'Budget' objects
 			std::deque <Command*> history;
 			const int MAX_UNDO	= 10;
-			int cursor = -1;					// default value of -1 means that nothing can be undone, ie; end of history
+			int cursor = -1;								// this is the index of the last executed command. default value of -1 means that nothing can be undone, ie; end of history
 			
-			BudgetManager(const BudgetManager&) = delete;  // deleting copy constructor
+			BudgetManager(const BudgetManager&) = delete;	// deleting copy constructor
 			BudgetManager& operator=(const BudgetManager&) = delete; // deleting assignment operator
 			
 		public:
 			~BudgetManager()
 			{
-				for (Budget* b : budgetVctr)
-				{
+				for (Budget* b : budgetVctr) 
 					delete b;
-				}
+				
+				for (Command* cmd : history) 
+					delete cmd;
 			}
 			static BudgetManager& getInstance()  // a static mathod to call for
 			{
@@ -256,12 +268,12 @@ class AddTransactionCommand : public Command    // concrete command
 				}
 				
 				else
-					std::cout << "\nBudget already exists!";  // i may need to remove this if else checking because its not this methods job
+					std::cout << "\nBudget already exists!";  // i may need to remove this if-else checking because its not this methods job
 			}
 			
 			void executeCommand(Command* cmd)
 			{
-				while (history.size() > cursor + 1)
+				while ((int)history.size() > cursor + 1)
 				{
 					delete history.back();
 					history.pop_back();
@@ -271,7 +283,7 @@ class AddTransactionCommand : public Command    // concrete command
 				history.push_back(cmd);		// add it to history
 				cursor++;					// move the pointer forward to point at it
 				
-				if (history.size() >= MAX_UNDO)  // if the history is too big
+				if ((int)history.size() > MAX_UNDO)  // if the history is too big
 				{
 					delete history.front();		// delete the oldest command pointer
 					history.pop_front();		// remove from history
@@ -289,24 +301,18 @@ class AddTransactionCommand : public Command    // concrete command
 				
 				history[cursor] -> undo();
 				cursor--;
-				
-//				Command* cmd = undoStack.back();	 // assigning the last action performed (ie; object) to a locally created pointer to Command object
-//				cmd->undo();						 // then calling undo through that object
-//				undoStack.pop_back(); 			   	 // removing it from the undo list
-//				redoStack.push_back(cmd);				 // adding to redo list
-//				// redo satck push back
 			}
 			
 			void redo()
 			{
-				if (cursor + 1 >= history.size())
+				if (cursor + 1 >= (int)history.size())
 				{
 					std::cout << "\nNothing to redo!";
 					return;
-					
-					cursor++;
-					history[cursor] -> execute();
 				}
+				
+				cursor++; 						// move the cursor right, ie; _undo_ the undo()
+				history[cursor] -> execute();	// then execute that command
 			}
 	};
 	
@@ -322,8 +328,8 @@ class AddTransactionCommand : public Command    // concrete command
 		
 		while (menuFlag)
 		{
-			// editing might or  might not be edited. lets see what time says...
-			std::cout << "\n1. Create a new transaction \t 2. Create a new category \t 3.  Create a new budget \t 4. Edit a transaction \t 5. Edit a category \t 6. Edit a budget \t 7. Delete a transaction \t 0. Exit the application\n";
+			// editing may or may not be implemented. lets see what time says...
+			std::cout << "\n1. Create a New Transaction \t 2. Create a New Category \t 3.  Create a New Budget \t 4. List All Transactions \t 7. Delete a Transaction \t 'U'. Undo \t 'R'. Redo \t 0. Exit the Application\n";
 			std::cin >> choice; // needs input validation: If the user enters more than one character then throw an errorr
 			
 			switch (choice)
@@ -335,7 +341,7 @@ class AddTransactionCommand : public Command    // concrete command
 				case '1':
 				{
 					std::string budName;
-					std::cout << "\nEnter budget: " << std::endl;
+					std::cout << "\nEnter budget: ";
 					std::cin >> budName;
 					
 					Budget* b = manager.findBudget(budName);
@@ -343,7 +349,7 @@ class AddTransactionCommand : public Command    // concrete command
 					{
 						std::string catName;
 				
-						std::cout << "\nEnter category: " << std::endl;
+						std::cout << "\nEnter category: ";
 						std::cin >> catName;
 					
 						Category* c = b->findCategory(catName);
@@ -352,8 +358,8 @@ class AddTransactionCommand : public Command    // concrete command
 						{
 							Transactions* t = c->inputTransaction();
 							
-							Command* cmd = new AddTransactionCommand(c, t);  // this cmd is deleted in undo() inside BudgetManager
-							manager.executeCommand(cmd); // adding the transaction to transactionVctr and pushing it onto undoStack
+							Command* cmd = new AddTransactionCommand(c, t);		// this cmd is deleted in undo() inside BudgetManager
+							manager.executeCommand(cmd);						// adding the transaction to transactionVctr and pushing it onto undoStack
 						}						
 					
 						else
@@ -409,6 +415,34 @@ class AddTransactionCommand : public Command    // concrete command
 				}
 				break;
 				
+				case '4':
+				{
+					std::string budName;
+					std::cout << "\nEnter budget: " << std::endl;
+					std::cin >> budName;
+					
+					Budget* b = manager.findBudget(budName);
+					if (b != nullptr)
+					{
+						std::string catName;
+				
+						std::cout << "\nEnter category: " << std::endl;
+						std::cin >> catName;
+					
+						Category* c = b->findCategory(catName);
+						
+						if (c != nullptr)
+							c->listTransactions();
+						
+						else
+							std::cout << "\nCategory does not exist!";						
+					}
+						
+					else
+						std::cout << "\nBudget does not exist!";
+				}
+				break;
+				
 				case '7':
 				{
 					std::string budName;
@@ -436,12 +470,13 @@ class AddTransactionCommand : public Command    // concrete command
 							Transactions* t = c->findTransaction(name);
 							
 							if (t != nullptr)
-								c->deleteTransaction(t);
+							{
+								Command* cmd = new DeleteTransactionCommand(c, t);
+								manager.executeCommand(cmd);
+							}
 							
 							else
 								std::cout << "\nTransaction does not exist!\n";
-								
-//							c->listTransactions(); // Just to make sure that transaction gets deleted  !!!REMOVE LATER!!!
 						}
 						
 						else
@@ -452,6 +487,16 @@ class AddTransactionCommand : public Command    // concrete command
 						std::cout << "\nBudget does not exist!";
 				}
 				break;
+				
+				case 'U':
+				case 'u':
+					manager.undo();
+					break;
+				
+				case 'R':
+				case 'r':
+					manager.redo();
+					break;
 				
 				default:
 					std::cout << "\nINVALID INPUT!";
