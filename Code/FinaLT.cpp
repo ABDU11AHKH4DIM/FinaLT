@@ -212,9 +212,9 @@ class AddTransactionCommand : public Command    // concrete command
 		private:
 			BudgetManager() { std::cout << "Called\n";}; // private constructor to prevent initialization in main()
 			std::vector <Budget*> budgetVctr;  // vector to store pointers to 'Budget' objects
-			std::deque <Command*> undoStack;
-			std::deque <Command*> redoStack;
+			std::deque <Command*> history;
 			const int MAX_UNDO	= 10;
+			int cursor = -1;					// default value of -1 means that nothing can be undone, ie; end of history
 			
 			BudgetManager(const BudgetManager&) = delete;  // deleting copy constructor
 			BudgetManager& operator=(const BudgetManager&) = delete; // deleting assignment operator
@@ -261,36 +261,52 @@ class AddTransactionCommand : public Command    // concrete command
 			
 			void executeCommand(Command* cmd)
 			{
-				cmd->execute();
-				
-				if (undoStack.size() >= MAX_UNDO)
+				while (history.size() > cursor + 1)
 				{
-					delete undoStack.front();  // this deletes the pointer
-					undoStack.pop_front();
+					delete history.back();
+					history.pop_back();
 				}
 				
-				undoStack.push_back(cmd);
+				cmd->execute();				// execute the command
+				history.push_back(cmd);		// add it to history
+				cursor++;					// move the pointer forward to point at it
 				
-				for (auto c : redoStack)
-					delete c;
-				
-				redoStack.clear();
-				// add redo logic
+				if (history.size() >= MAX_UNDO)  // if the history is too big
+				{
+					delete history.front();		// delete the oldest command pointer
+					history.pop_front();		// remove from history
+					cursor--;					// move the cursor back to compensate
+				}
 			}
 			
 			void undo()
 			{
-				if (undoStack.empty())
+				if (cursor < 0)
 				{
 					std::cout << "\nNothing to undo!";
 					return;
 				}
 				
-				Command* cmd = undoStack.back();	 // assigning the last action performed (ie; object) to a locally created pointer to Command object
-				cmd->undo();						 // then calling undo through that object
-				undoStack.pop_back(); 			   	 // removing it from the undo list
-				redoStack.push_back(cmd);				 // adding to redo list
-				// redo satck push back
+				history[cursor] -> undo();
+				cursor--;
+				
+//				Command* cmd = undoStack.back();	 // assigning the last action performed (ie; object) to a locally created pointer to Command object
+//				cmd->undo();						 // then calling undo through that object
+//				undoStack.pop_back(); 			   	 // removing it from the undo list
+//				redoStack.push_back(cmd);				 // adding to redo list
+//				// redo satck push back
+			}
+			
+			void redo()
+			{
+				if (cursor + 1 >= history.size())
+				{
+					std::cout << "\nNothing to redo!";
+					return;
+					
+					cursor++;
+					history[cursor] -> execute();
+				}
 			}
 	};
 	
