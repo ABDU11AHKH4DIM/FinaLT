@@ -5,17 +5,20 @@ AddTransactionCommand::AddTransactionCommand(Category* cat, Transactions* t) : r
 
 AddTransactionCommand::~AddTransactionCommand()
 {
-	delete transaction;
+	if (!inCategory)
+		delete transaction;
 }
 
 void AddTransactionCommand::execute()
 {
     receiver->pushTransaction(transaction);
+    inCategory = true;
 }
 
 void AddTransactionCommand::undo()
 {
     receiver->removeTransaction(transaction);
+    inCategory = false;
 }
 
 // DeleteTransactionCommand
@@ -23,15 +26,18 @@ DeleteTransactionCommand::DeleteTransactionCommand(Category* c, Transactions* t)
 
 DeleteTransactionCommand::~DeleteTransactionCommand()
 {
-	delete transaction;
+	if (inCategory)
+		delete transaction;
 }
 
 void DeleteTransactionCommand::execute()
 {
 	receiver->removeTransaction(transaction);
+	inCategory = true;
 }
 
 void DeleteTransactionCommand::undo()
 {
 	receiver->pushTransaction(transaction);
+	inCategory = false;
 }

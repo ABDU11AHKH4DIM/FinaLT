@@ -18,6 +18,7 @@ class AddTransactionCommand : public Command    // concrete command
     private:
         Category* receiver;      // the object that does the actual work
         Transactions* transaction; // the data needed to do and undo
+        bool inCategory = false;						// need this flag for memory management, because in some case transactions pointers become dangling pointers 
     
     public:
         AddTransactionCommand(Category* cat, Transactions* t);
@@ -32,6 +33,7 @@ class DeleteTransactionCommand : public Command
 	private:
 		Category* receiver;
 		Transactions* transaction;
+		bool inCategory = false;						// need this flag for memory management, because in some case transactions pointers become dangling pointers 
 		
 	public:
 		DeleteTransactionCommand(Category* c, Transactions* t);

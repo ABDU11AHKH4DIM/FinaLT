@@ -11,10 +11,11 @@ class Category  // RECEIVER
 {
 	private:
 		std::string name;
-		std::vector <Transactions*> transactionVctr;  // a vector to store pointers to 'Transactions' objects
+		std::vector <Transactions*> transactionVctr;	// a vector to store pointers to 'Transactions' objects
 	
 	public:
 		Category(std::string name);
+		~Category();
 		
 		std::string getName();
 		void listTransactions();

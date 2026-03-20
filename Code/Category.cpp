@@ -3,6 +3,12 @@
 
 Category::Category(std::string name) : name(name){}
 
+Category::~Category()
+{
+	for (Transactions* t : transactionVctr)
+        delete t;
+}
+
 std::string Category::getName()
 {
 	return name;
@@ -12,7 +18,7 @@ void Category::listTransactions()
 {
 	for (auto x : transactionVctr)
 	{
-		std::cout << "\n" << x->getName() << "\n";
+		std::cout << "\n" << x->getName();
 	}
 }
 
