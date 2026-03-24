@@ -32,13 +32,13 @@ Transactions* Category::inputTransaction()
 	std::string name, details;
 	double amount;
 	
-	std::cout << "\nEnter the name" << std::endl;
+	std::cout << "\nEnter transaction name: ";
 	std::cin >> name; 
 	
-	std::cout << "\nEnter amount: " << std::endl;
+	std::cout << "\nEnter amount: ";
 	std::cin >> amount;
 	
-	std::cout << "\nEnter details: " << std::endl;
+	std::cout << "\nEnter details: ";
 	std::cin >> details;
 	
 	Transactions* t = new Transactions(name, amount, details); // DO NOT FORGET TO USE DELETE

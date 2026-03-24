@@ -16,6 +16,20 @@ std::string Budget::getName()
 	return name;
 }
 
+Category* Budget::takeInput()
+{
+	std::string catName;		
+	std::cout << "\nEnter category: " << std::endl;
+	std::cin >> catName;
+
+	Category* c = findCategory(catName);
+	
+	if (c == nullptr)
+		std::cout << "\nCATEGORY NOT FOUND!\n";
+		
+	return c; // c is returned regardless
+}
+
 Category* Budget::findCategory(std::string catName)  // to search if a category already exists
 {
 	for (Category* c : categoryVctr)

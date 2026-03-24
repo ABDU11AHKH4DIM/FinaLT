@@ -31,8 +31,10 @@ class BudgetManager  // INVOKER for command pattern
 	public:
 		~BudgetManager();
 		
+		void ListBudgets();
 		static BudgetManager& getInstance();					// a static method to call for
-		
+		Budget* takeInput();
+				
 		Budget* findBudget(std::string budName);
 		void addBudget(std::string name);
 		void executeCommand(Command* cmd);

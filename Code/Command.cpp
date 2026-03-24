@@ -26,18 +26,18 @@ DeleteTransactionCommand::DeleteTransactionCommand(Category* c, Transactions* t)
 
 DeleteTransactionCommand::~DeleteTransactionCommand()
 {
-	if (inCategory)
+	if (!inCategory)
 		delete transaction;
 }
 
 void DeleteTransactionCommand::execute()
 {
 	receiver->removeTransaction(transaction);
-	inCategory = true;
+	inCategory = false;
 }
 
 void DeleteTransactionCommand::undo()
 {
 	receiver->pushTransaction(transaction);
-	inCategory = false;
+	inCategory = true;
 }

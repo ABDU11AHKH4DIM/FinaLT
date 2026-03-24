@@ -20,6 +20,7 @@ class Budget // for multiple budgets
 		~Budget();
 		
 		std::string getName();
+		Category* takeInput();
 		Category* findCategory(std::string catName);
 		void addCategory(std::string catName);
 };

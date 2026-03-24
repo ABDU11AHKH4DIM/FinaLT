@@ -1,7 +1,7 @@
 #include "BudgetManager.h"
 #include <iostream>
 
-BudgetManager::BudgetManager() { std::cout << "Called\n"; }
+BudgetManager::BudgetManager() {}
 
 BudgetManager::~BudgetManager()
 {
@@ -12,10 +12,30 @@ BudgetManager::~BudgetManager()
 		delete cmd;
 }
 
+void BudgetManager::ListBudgets()
+{
+	for (Budget* b : budgetVctr)
+		std::cout << "\n" << b->getName();
+}
+
 BudgetManager& BudgetManager::getInstance()  // a static mathod to call for
 {
 	static BudgetManager instance;  // static ensures that its created only once along with the private constructor
 	return instance;
+}
+
+Budget* BudgetManager::takeInput()
+{
+	std::string budName;
+	std::cout << "\nEnter budget: " << std::endl;
+	std::cin >> budName;
+				
+	Budget* b = findBudget(budName);
+	
+	if (b == nullptr)
+		std::cout << "\nBUDGET NOT FOUND!\n";
+
+	return b;  // b is returned regardless
 }
 
 Budget* BudgetManager::findBudget(std::string budName)
