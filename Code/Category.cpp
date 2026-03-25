@@ -34,16 +34,20 @@ Transactions* Category::inputTransaction()
 	double amount;
 	
 	std::cout << "\nEnter transaction name: ";
-	std::cin >> name;
-	discardInput();										// for leftover input
+	std::getline(std::cin, name);
 	
 	std::cout << "\nEnter amount: ";
 	std::cin >> amount;
-	discardInput();										// for leftover input
+	while (std::cin.fail())
+	{
+		recoverInput();
+		std::cout << "\nINVALID INPUT!\n";
+		std::cin >> amount;
+	}
 	
 	std::cout << "\nEnter details: ";
-	std::cin >> details;
-	discardInput();										// for leftover input
+	discardInput();
+	std::getline(std::cin, details);
 	
 	Transactions* t = new Transactions(name, amount, details); // DO NOT FORGET TO USE DELETE
 	

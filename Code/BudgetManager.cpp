@@ -27,9 +27,8 @@ BudgetManager& BudgetManager::getInstance()  // a static mathod to call for
 Budget* BudgetManager::takeInput()
 {
 	std::string budName;
-	std::cout << "\nEnter budget: " << std::endl;
-	std::cin >> budName;
-	discardInput();										// for leftover input
+	std::cout << "\nEnter budget: ";
+	std::getline(std::cin, budName);
 	
 	Budget* b = findBudget(budName);
 	
@@ -57,7 +56,12 @@ void BudgetManager::addBudget(std::string name)
 		double limit;
 		std::cout << "\nEnter budget limit: ";
 		std::cin >> limit;
-		
+		while (std::cin.fail())
+		{
+			recoverInput();
+			std::cout << "\nINVALID INPUT!\n";
+			std::cin >> limit;
+		}		
 		budgetVctr.push_back(new Budget(name, limit));
 	}
 	

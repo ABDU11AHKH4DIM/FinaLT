@@ -20,9 +20,8 @@ std::string Budget::getName()
 Category* Budget::takeInput()
 {
 	std::string catName;		
-	std::cout << "\nEnter category: " << std::endl;
-	std::cin >> catName;
-	discardInput();										// for leftover input
+	std::cout << "\nEnter category: ";
+	std::getline(std::cin, catName);
 
 	Category* c = findCategory(catName);
 	

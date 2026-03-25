@@ -18,7 +18,7 @@ void discardInput()
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-void resetInput()
+void recoverInput()  // for in case std::cin enters  fail state
 {
 	if (std::cin.fail())
 	{
