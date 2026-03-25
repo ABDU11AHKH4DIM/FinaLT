@@ -29,7 +29,8 @@ Budget* BudgetManager::takeInput()
 	std::string budName;
 	std::cout << "\nEnter budget: " << std::endl;
 	std::cin >> budName;
-				
+	discardInput();										// for leftover input
+	
 	Budget* b = findBudget(budName);
 	
 	if (b == nullptr)

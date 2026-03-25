@@ -28,8 +28,9 @@ int main()
 				  << "6. Add a new Budget \t 7. Add a new Category\n"
 				  << "U. Undo \t R. Redo\n"
 				  << "0. EXIT PROGRAM\n";
-				  
+		
 		std::cin >> choice;
+		resetInput();			// input validation
 		
 		switch (choice)
         {
@@ -41,12 +42,12 @@ int main()
             {
                 if (currentCategory == nullptr)
                 {
-                    std::cout << "\nNo category selected! Use option 5 to select one.";
+                    std::cout << "\nNo category selected! Use option 5 to select one.\n";
                     break;
                 }
                 Transactions* t = currentCategory->inputTransaction();
-                Command* cmd = new AddTransactionCommand(currentCategory, t);
-                manager.executeCommand(cmd);
+                Command* cmd = new AddTransactionCommand(currentCategory, t);	// this cmd is deleted in undo() inside BudgetManager
+                manager.executeCommand(cmd);									// adding the transaction to transactionVctr and pushing it onto undoStack
             }
             break;
             
@@ -54,7 +55,7 @@ int main()
             {
                 if (currentCategory == nullptr)
                 {
-                    std::cout << "\nNo category selected! Use option 5 to select one.";
+                    std::cout << "\nNo category selected! Use option 5 to select one.\n";
                     break;
                 }
                 currentCategory->listTransactions();
@@ -78,7 +79,7 @@ int main()
             {
                 if (currentCategory == nullptr)
                 {
-                    std::cout << "\nNo category selected! Use option 5 to select one.";
+                    std::cout << "\nNo category selected! Use option 5 to select one.\n";
                     break;
                 }
                 currentCategory->listTransactions();
@@ -101,7 +102,7 @@ int main()
             {
                 if (currentBudget == nullptr)
                 {
-                    std::cout << "\nNo budget selected! Use option 4 to select one.";
+                    std::cout << "\nNo budget selected! Use option 4 to select one.\n";
                     break;
                 }
                 Category* c = currentBudget->takeInput();
@@ -118,6 +119,8 @@ int main()
                 std::string budName;
                 std::cout << "\nEnter budget name: ";
                 std::cin >> budName;
+                discardInput();			// for leftover input
+                
                 manager.addBudget(budName);
             }
             break;
@@ -126,12 +129,14 @@ int main()
             {
                 if (currentBudget == nullptr)
                 {
-                    std::cout << "\nNo budget selected! Use option 4 to select one.";
+                    std::cout << "\nNo budget selected! Use option 4 to select one.\n";
                     break;
                 }
                 std::string catName;
                 std::cout << "\nEnter category name: ";
                 std::cin >> catName;
+                discardInput();			// for leftover input
+                
                 currentBudget->addCategory(catName);
             }
             break;
@@ -150,7 +155,7 @@ int main()
                 std::cout << "\nInvalid input!";
         }
 	}
-	
+}
 	
 //	while (menuFlag)
 //	{
@@ -184,8 +189,8 @@ int main()
 //					{
 //						Transactions* t = c->inputTransaction();
 //						
-//						Command* cmd = new AddTransactionCommand(c, t);		// this cmd is deleted in undo() inside BudgetManager
-//						manager.executeCommand(cmd);						// adding the transaction to transactionVctr and pushing it onto undoStack
+//						Command* cmd = new AddTransactionCommand(c, t);		
+//						manager.executeCommand(cmd);						
 //					}						
 //				
 //					else
@@ -328,4 +333,4 @@ int main()
 //				std::cout << "\nINVALID INPUT!";
 //		}
 //	}
-}
+//}

@@ -4,5 +4,7 @@
 #include <string>
 
 std::string tolowerString(std::string str);
+void resetInput();
+void discardInput();
 
 #endif

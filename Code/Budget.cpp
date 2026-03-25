@@ -1,4 +1,5 @@
 #include "Budget.h"
+#include "Utils.h"
 #include <iostream>
 
 Budget::Budget(std::string name, double limit) : name(name), limit(limit) {}
@@ -21,6 +22,7 @@ Category* Budget::takeInput()
 	std::string catName;		
 	std::cout << "\nEnter category: " << std::endl;
 	std::cin >> catName;
+	discardInput();										// for leftover input
 
 	Category* c = findCategory(catName);
 	

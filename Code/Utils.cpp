@@ -1,5 +1,7 @@
 #include "Utils.h"
+#include <iostream>
 #include <cctype>
+#include <limits>
 
 std::string tolowerString(std::string str)
 {
@@ -9,4 +11,18 @@ std::string tolowerString(std::string str)
 	}
 	
 	return str;
+}
+
+void discardInput()
+{
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+void resetInput()
+{
+	if (std::cin.fail())
+	{
+		std::cin.clear();
+		discardInput();
+	}
 }

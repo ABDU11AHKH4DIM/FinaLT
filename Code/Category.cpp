@@ -1,6 +1,7 @@
 #include "Category.h"
 #include <iostream>
 
+
 Category::Category(std::string name) : name(name){}
 
 Category::~Category()
@@ -33,13 +34,16 @@ Transactions* Category::inputTransaction()
 	double amount;
 	
 	std::cout << "\nEnter transaction name: ";
-	std::cin >> name; 
+	std::cin >> name;
+	discardInput();										// for leftover input
 	
 	std::cout << "\nEnter amount: ";
 	std::cin >> amount;
+	discardInput();										// for leftover input
 	
 	std::cout << "\nEnter details: ";
 	std::cin >> details;
+	discardInput();										// for leftover input
 	
 	Transactions* t = new Transactions(name, amount, details); // DO NOT FORGET TO USE DELETE
 	
