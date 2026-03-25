@@ -62,7 +62,6 @@ int main()
                 
                 std::string name;
                 std::cout << "\nEnter transaction name: ";
-                discardInput();
                 std::getline(std::cin, name);
                 
                 Transactions* t = currentCategory->findTransaction(name);
