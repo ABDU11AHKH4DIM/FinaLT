@@ -1,43 +1,41 @@
 #include "Command.h"
 
-// AddTransactionCommand
-AddTransactionCommand::AddTransactionCommand(Category* cat, Transactions* t) : receiver(cat), transaction(t) {}
+AddTransactionCommand::AddTransactionCommand(Budget* b, Transaction* t) : receiver(b), transaction(t) {}
 
-AddTransactionCommand::~AddTransactionCommand()
+AddTransactionCommand::~AddTransactionCommand()		// this class conditionally owns Transaction
 {
-	if (!inCategory)
+	if (!inBudget)				// if the transation is NOT in Budget, only then delete it
 		delete transaction;
 }
 
-void AddTransactionCommand::execute()
+void AddTransactionCommand::execute()			// override tells the compiler that this method is defining a virtual method of a parent class, and that its not a new method. so if no matching method is found, an error will be thrown
 {
     receiver->pushTransaction(transaction);
-    inCategory = true;
+    inBudget = true;
 }
 
 void AddTransactionCommand::undo()
 {
     receiver->removeTransaction(transaction);
-    inCategory = false;
+    inBudget = false;
 }
 
-// DeleteTransactionCommand
-DeleteTransactionCommand::DeleteTransactionCommand(Category* c, Transactions* t) : receiver(c), transaction(t) {}
+DeleteTransactionCommand::DeleteTransactionCommand(Budget* b, Transaction* t) : receiver(b), transaction(t) {}
 
-DeleteTransactionCommand::~DeleteTransactionCommand()
+DeleteTransactionCommand::~DeleteTransactionCommand()		// this class conditionally owns Transaction
 {
-	if (!inCategory)
+	if (!inBudget)				// if the transation is NOT in Budget, only then delete it. Temporary ownership. Transfer of ownership
 		delete transaction;
 }
 
-void DeleteTransactionCommand::execute()
+void DeleteTransactionCommand::execute() 		// remove it from the Budget
 {
 	receiver->removeTransaction(transaction);
-	inCategory = false;
+	inBudget = false;
 }
 
-void DeleteTransactionCommand::undo()
+void DeleteTransactionCommand::undo()			// add it back to Budget
 {
 	receiver->pushTransaction(transaction);
-	inCategory = true;
+	inBudget = true;
 }

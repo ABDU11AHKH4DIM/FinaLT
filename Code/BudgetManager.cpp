@@ -1,91 +1,71 @@
 #include "BudgetManager.h"
-#include <iostream>
 
-BudgetManager::BudgetManager() {}
+BudgetManager::BudgetManager()	{}									// private constructor to prevent initialization in main()
 
-BudgetManager::~BudgetManager()
-{
-	for (Budget* b : budgetVctr) 
-		delete b;
+BudgetManager::~BudgetManager() 									// BudgetManager owns Budget
+{	
+	delete currentBudget;							// even if currentBudget is nullptr, no problem. delete has built-in checks for that
 	
-	for (Command* cmd : history) 
-		delete cmd;
+	for (Command* cmd : history)					// BudgetManager owns Command
+		delete cmd;									// deleting the history
 }
 
-void BudgetManager::ListBudgets()
+BudgetManager& BudgetManager::getInstance()  				// a static mathod to call for
 {
-	for (Budget* b : budgetVctr)
-		std::cout << "\n" << b->getName();
-}
-
-BudgetManager& BudgetManager::getInstance()  // a static mathod to call for
-{
-	static BudgetManager instance;  // static ensures that its created only once along with the private constructor
+	static BudgetManager instance;  				// static ensures that its created only once along with the private constructor
 	return instance;
 }
 
-Budget* BudgetManager::takeInput()
+Budget* BudgetManager::getBudget()
 {
+	return currentBudget;
+}
+
+void BudgetManager::createNewBudget()
+{
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');			// calling because of getline()
 	std::string budName;
-	std::cout << "\nEnter budget: ";
+	std::cout << "\nEnter budget name: ";
 	std::getline(std::cin, budName);
 	
-	Budget* b = findBudget(budName);
+	double limit;
+	std::cout << "\nEnter budget limit: ";
+	std::cin >> limit;
 	
-	if (b == nullptr)
-		std::cout << "\nBUDGET NOT FOUND!\n";
-
-	return b;  // b is returned regardless
-}
-
-Budget* BudgetManager::findBudget(std::string budName)
-{
-	for (Budget* b : budgetVctr)
+	while (std::cin.fail())					// Input validation
 	{
-		if (tolowerString(budName) == tolowerString(b->getName()))
-			return b;
-	}
-	
-	return nullptr;
-}
-
-void BudgetManager::addBudget(std::string name)
-{
-	if (findBudget(name) == nullptr)
-	{
-		double limit;
-		std::cout << "\nEnter budget limit: ";
+		std::cin.clear();
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		
+		std::cout << "\nINVALID INPUT!\n";
 		std::cin >> limit;
-		while (std::cin.fail())
-		{
-			recoverInput();
-			std::cout << "\nINVALID INPUT!\n";
-			std::cin >> limit;
-		}		
-		budgetVctr.push_back(new Budget(name, limit));
 	}
 	
-	else
-		std::cout << "\nBudget already exists!";  // i may need to remove this if-else checking because its not this methods job
+	for (Command* cmd : history) delete cmd;
+	history.clear();
+	cursor = -1;
+	delete currentBudget;
+	
+	currentBudget = new Budget(budName, limit);
 }
 
 void BudgetManager::executeCommand(Command* cmd)
 {
-	while ((int)history.size() > cursor + 1)
+	while ((int)history.size() > cursor + 1)	// casting history.size() to int because it returns an unsigned int, as cursor is signed. 
 	{
-		delete history.back();
+		delete history.back();					// deleting the history after the cursor because if a user performs a new action after undo then redo cannot be performed because it becomes invalid
 		history.pop_back();
 	}
 	
-	cmd->execute();				// execute the command
-	history.push_back(cmd);		// add it to history
-	cursor++;					// move the pointer forward to point at it
+	cmd->execute();								// execute the command
+	history.push_back(cmd);						// add it to history deque
+	cursor++;									// move the pointer forward (increment the index) to point at it
 	
-	if ((int)history.size() > MAX_UNDO)  // if the history is too big
+	if ((int)history.size() > MAX_UNDO) 		// if the history is too big
 	{
-		delete history.front();		// delete the oldest command pointer
-		history.pop_front();		// remove from history
-		cursor--;					// move the cursor back to compensate
+		delete history.front();					// delete the oldest command pointer
+		history.pop_front();					// remove from history
+		cursor--;								// move the cursor back (decrement) to compensate
 	}
 }
 
@@ -99,6 +79,7 @@ void BudgetManager::undo()
 	
 	history[cursor] -> undo();
 	cursor--;
+	std::cout << "\n*UNDO PERFORMED*\n";
 }
 
 void BudgetManager::redo()
@@ -106,9 +87,10 @@ void BudgetManager::redo()
 	if (cursor + 1 >= (int)history.size())
 	{
 		std::cout << "\nNothing to redo!";
-		return;
+		return;									// no need for an else block because of this early return
 	}
 	
-	cursor++; 						// move the cursor right, ie; _undo_ the undo()
-	history[cursor] -> execute();	// then execute that command
+	cursor++; 									// move the cursor right (increment), ie; _undo_ the undo()
+	history[cursor] -> execute();				// then execute that command
+	std::cout << "\n*REDO PERFORMED*\n";
 }

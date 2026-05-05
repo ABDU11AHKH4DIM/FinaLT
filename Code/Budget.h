@@ -1,28 +1,34 @@
-#ifndef BUDGET_H
-#define BUDGET_H
+#pragma once
+#include <string>			// for std::string
+#include <vector>			// for std::vector
+#include <iostream>			// for input/output
+#include <limits>			// for std::numeric_limits and max()
+#include <algorithm>		// for std::remove()
+#include "Transaction.h"
 
-#include <string>
-#include <vector>
-#include "Category.h"
-#include "Utils.h"
+// ============================================================
+// Budget  (RECEIVER)
+// ============================================================
 
-class Budget // for multiple budgets
+class Budget  // RECEIVER
 {
 	private:
 		std::string name;
 		double limit;
-//		double daily;  // a daily spending limit calculated using limit and budget duration, exceeding this will cause it  to be recalculated
-//		int duration;  // to-do
-		std::vector <Category*> categoryVctr; // a vector to store pointers to 'Category' objects
-		
+		std::vector <Transaction*> transactionVctr;	// a vector to store pointers to 'Transaction' objects
+	
 	public:
 		Budget(std::string name, double limit);
 		~Budget();
-		
 		std::string getName();
-		Category* takeInput();
-		Category* findCategory(std::string catName);
-		void addCategory(std::string catName);
+		void setName(std::string name);
+		double getLimit();
+		void setLimit(double limit);
+		double getTotalSpent();						// on the fly calculations help reduce the code because the changes are automatically done
+		double getRemaining();
+		void listTransaction();
+		void pushTransaction(Transaction* t);
+		Transaction* inputTransaction();
+		Transaction* findTransaction(std::string name);  // to search if a transaction already exists
+		void removeTransaction(Transaction* t);  // this method is required for undo as it does NOT delete the object itself
 };
-
-#endif

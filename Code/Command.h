@@ -1,10 +1,11 @@
-#ifndef COMMAND_H
-#define COMMAND_H
+#pragma once
+#include "Budget.h"
 
-#include "Category.h"
-#include "Transactions.h"
+// ============================================================
+// Command  (base + concrete commands)
+// ============================================================
 
-class Command  // base command
+class Command  // BASE/ABSTRACT COMMAND
 {
 	public:
 		virtual void execute()	= 0;
@@ -13,34 +14,32 @@ class Command  // base command
 		virtual ~Command() {};
 };
 
-class AddTransactionCommand : public Command    // concrete command
+class AddTransactionCommand : public Command    // CONCRETE COMMAND
 {
     private:
-        Category* receiver;      // the object that does the actual work
-        Transactions* transaction; // the data needed to do and undo
-        bool inCategory = false;						// need this flag for memory management, because in some case transactions pointers become dangling pointers. default is false beacause when this command is created the pointer is NOT in the category vector
+        Budget* receiver;      			// the object that does the actual work
+        Transaction* transaction; 		// the data needed to do and undo
+        bool inBudget = false;			// Transfer of ownership. Need this flag for memory management, because in some case Transaction pointers become dangling pointers. 
+										// default is false beacause when this command is created the pointer is NOT in the budgetVctr vector
     
     public:
-        AddTransactionCommand(Category* cat, Transactions* t);
-        ~AddTransactionCommand();
-        
-        void execute() override;
-        void undo() override;  // override tells the compiler that this method is defining a virtual method of a parent class, and that its not a new method. so if no matching method is found, an error will be thrown
+        AddTransactionCommand(Budget* b, Transaction* t);
+        ~AddTransactionCommand();		// this class conditionally owns Transaction
+        void execute() override;		// override tells the compiler that this method is defining a virtual method of a parent class, and that its not a new method. so if no matching method is found, an error will be thrown
+        void undo() override;
 };
 
 class DeleteTransactionCommand : public Command
 {
 	private:
-		Category* receiver;
-		Transactions* transaction;
-		bool inCategory = true;						// need this flag for memory management, because in some case transactions pointers become dangling pointers. default is true beacause when this command is created the pointer is already in the category vector
+		Budget* receiver;
+		Transaction* transaction;
+		bool inBudget = true;			// Transfer of ownership. Need this flag for memory management, because in some case Transaction pointers become dangling pointers. 
+										// default is true beacause when this command is created the pointer is already in the category vector
 		
 	public:
-		DeleteTransactionCommand(Category* c, Transactions* t);
-		~DeleteTransactionCommand();
-		
-		void execute() override;
-		void undo() override;
+		DeleteTransactionCommand(Budget* b, Transaction* t);
+		~DeleteTransactionCommand();	// this class conditionally owns Transaction
+		void execute() override; 		// remove it from the Budget
+		void undo() override;			// add it back to Budget
 };
-
-#endif
