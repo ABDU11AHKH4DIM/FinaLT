@@ -52,7 +52,7 @@ void Budget::listTransaction()
 	{
 		for (auto* x : transactionVctr)
 		{
-		std::cout << "\n" << x->getName() << "\t|\t" << x->getAmount() << "\t|\t [DATE]";
+		std::cout << "\n" << x->getName() << "\t|\t" << x->getAmount() << "\t|\t" << x->getTimeOfCreation();
 		}
 	}
 }
