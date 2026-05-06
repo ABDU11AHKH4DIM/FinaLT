@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "Budget.h"
 #include "utils.h"
 
@@ -52,7 +53,9 @@ void Budget::listTransaction()
 	{
 		for (auto* x : transactionVctr)
 		{
-		std::cout << "\n" << x->getName() << "\t|\t" << x->getAmount() << "\t|\t" << x->getTimeOfCreation();
+		std::cout << "\n" << std::left << std::setw(25) << x->getName() 
+				  << "| PKR " << std::setw(10) << x->getAmount()
+				  << "| " << std::setw(26) << x->getTimeOfCreation();
 		}
 	}
 }

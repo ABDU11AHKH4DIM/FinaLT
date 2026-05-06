@@ -1,5 +1,6 @@
 #include <iostream>			// for input/output
 #include <limits>			// for std::numeric_limits and max()
+#include <iomanip>
 #include "BudgetManager.h"
 
 // ============================================================
@@ -8,7 +9,12 @@
 
 int main()
 {
-	std::cout << "\n======== FinaLT ========\n";
+	std::cout << "\n"
+			  << std::setfill('=') 
+			  << std::setw(8) << ""
+			  << " FinaLT "
+			  << std::setw(8) << "" << "\n"
+			  << std::setfill(' ');
 	
 	BudgetManager& manager = BudgetManager::getInstance();  // used a reference because it points to the same instance. Without it, the copy constructor will be invoked, which has been deleted for this class
 	
@@ -28,10 +34,12 @@ int main()
             currentBudget = manager.getBudget();
 		}
 		
-		std::cout << "\nBudget Name: " << (currentBudget != nullptr ? currentBudget->getName() : "NULL" )
-				  << "\t|\t"
+		std::cout << std::left
+				  << "\nBudget Name: " << std::setw(20) << (currentBudget != nullptr ? currentBudget->getName() : "NULL" )
+				  << "| "
+				  << std::setw(8)
 				  << "PKR " << currentBudget->getRemaining() << " left of PKR " << currentBudget->getLimit()
-				  << "\t(PKR " << currentBudget->getTotalSpent() << " spent)\n";
+				  << "(PKR " << currentBudget->getTotalSpent() << " spent)\n";
 		
 		std::cout << "\n---- CHOOSE AN OPTION ----\n\n"
 				  << "1. Add a new transaction \t 2. Delete a transaction \t 3. List all Transaction\n"
@@ -84,17 +92,6 @@ int main()
             case '4':  // edit budget
             {
             	manager.editBudget();
-//                std::cout << "\n=== Edit name ===\n";
-//                std::string name;
-//                std::cout << "\nEnter name: ";
-//                std::getline(std::cin, name);
-//                currentBudget->setName(name);
-//                
-//                std::cout << "\n=== Edit limit ===\n";
-//                double limit;
-//                std::cout << "\nEnter limit: ";
-//                std::cin >> limit;
-//                currentBudget->setLimit(limit);
             }
             break;
             
@@ -109,7 +106,7 @@ int main()
                 break;
             
             default:
-                std::cout << "\nINVALID INPUT\n";
+                std::cout << "\n!!! INVALID INPUT !!!\n";
         }
 	}
 }

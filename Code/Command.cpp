@@ -11,13 +11,14 @@ AddTransactionCommand::~AddTransactionCommand()		// this class conditionally own
 void AddTransactionCommand::execute()			// override tells the compiler that this method is defining a virtual method of a parent class, and that its not a new method. so if no matching method is found, an error will be thrown
 {
     receiver->pushTransaction(transaction);
+    std::cout << "\n---> TRANSACTION ADDED <---\n";
     inBudget = true;
 }
 
 void AddTransactionCommand::undo()
 {
     receiver->removeTransaction(transaction);
-    inBudget = false;
+	inBudget = false;
 }
 
 DeleteTransactionCommand::DeleteTransactionCommand(Budget* b, Transaction* t) : receiver(b), transaction(t) {}
@@ -31,6 +32,7 @@ DeleteTransactionCommand::~DeleteTransactionCommand()		// this class conditional
 void DeleteTransactionCommand::execute() 		// remove it from the Budget
 {
 	receiver->removeTransaction(transaction);
+	std::cout << "\n---> TRANSACTION DELETED <---\n";
 	inBudget = false;
 }
 

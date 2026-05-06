@@ -36,7 +36,7 @@ void BudgetManager::createNewBudget()
 		std::cin.clear();
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		
-		std::cout << "\nINVALID INPUT!\n";
+		std::cout << "\n!!! INVALID INPUT !!!\n";
 		std::cin >> limit;
 	}
 	
@@ -96,24 +96,24 @@ void BudgetManager::undo()
 {
 	if (cursor < 0)
 	{
-		std::cout << "\nNothing to undo!";
+		std::cout << "\n!!! NOTHING TO UNDO !!!\n";
 		return;
 	}
 	
 	history[cursor] -> undo();
 	cursor--;
-	std::cout << "\n*UNDO PERFORMED*\n";
+	std::cout << "\n---> UNDO PERFORMED <---\n";
 }
 
 void BudgetManager::redo()
 {
 	if (cursor + 1 >= (int)history.size())
 	{
-		std::cout << "\nNothing to redo!";
+		std::cout << "\n!!! NOTHING TO REDO !!!\n";
 		return;									// no need for an else block because of this early return
 	}
 	
 	cursor++; 									// move the cursor right (increment), ie; _undo_ the undo()
 	history[cursor] -> execute();				// then execute that command
-	std::cout << "\n*REDO PERFORMED*\n";
+	std::cout << "\n---> REDO PERFORMED <---\n";
 }
