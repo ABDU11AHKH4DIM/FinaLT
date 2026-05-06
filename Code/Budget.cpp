@@ -52,7 +52,7 @@ void Budget::listTransaction()
 	{
 		for (auto* x : transactionVctr)
 		{
-		std::cout << "\n" << x->getName();
+		std::cout << "\n" << x->getName() << "\t|\t" << x->getAmount() << "\t|\t [DATE]";
 		}
 	}
 }
@@ -64,7 +64,6 @@ void Budget::pushTransaction(Transaction* t)
 
 Transaction* Budget::inputTransaction()
 {
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');			// calling because of getline()
 	std::string name, details;
 	std::cout << "\nEnter transaction name: ";
 	std::getline(std::cin, name);

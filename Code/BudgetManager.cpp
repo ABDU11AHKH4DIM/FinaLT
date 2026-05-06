@@ -23,7 +23,6 @@ Budget* BudgetManager::getBudget()
 
 void BudgetManager::createNewBudget()
 {
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');			// calling because of getline()
 	std::string budName;
 	std::cout << "\nEnter budget name: ";
 	std::getline(std::cin, budName);

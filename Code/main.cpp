@@ -13,7 +13,6 @@ int main()
 	BudgetManager& manager = BudgetManager::getInstance();  // used a reference because it points to the same instance. Without it, the copy constructor will be invoked, which has been deleted for this class
 	
 	// MAIN MENU
-		
 	char choice;
 	bool menuFlag = true;									// used a flag so that the prgram can be terminated from inside a switch case
 	
@@ -84,16 +83,17 @@ int main()
             
             case '4':  // edit budget
             {
-            	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');			// called because of getline()
                 std::cout << "\n=== Edit name ===\n";
                 std::string name;
                 std::cout << "\nEnter name: ";
+//                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');			// called because of getline()
                 std::getline(std::cin, name);
                 currentBudget->setName(name);
                 
                 std::cout << "\n=== Edit limit ===\n";
                 double limit;
                 std::cout << "\nEnter limit: ";
+                std::cin >> limit;
                 currentBudget->setLimit(limit);
             }
             break;
