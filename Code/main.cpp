@@ -83,18 +83,18 @@ int main()
             
             case '4':  // edit budget
             {
-                std::cout << "\n=== Edit name ===\n";
-                std::string name;
-                std::cout << "\nEnter name: ";
-//                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');			// called because of getline()
-                std::getline(std::cin, name);
-                currentBudget->setName(name);
-                
-                std::cout << "\n=== Edit limit ===\n";
-                double limit;
-                std::cout << "\nEnter limit: ";
-                std::cin >> limit;
-                currentBudget->setLimit(limit);
+            	manager.editBudget();
+//                std::cout << "\n=== Edit name ===\n";
+//                std::string name;
+//                std::cout << "\nEnter name: ";
+//                std::getline(std::cin, name);
+//                currentBudget->setName(name);
+//                
+//                std::cout << "\n=== Edit limit ===\n";
+//                double limit;
+//                std::cout << "\nEnter limit: ";
+//                std::cin >> limit;
+//                currentBudget->setLimit(limit);
             }
             break;
             

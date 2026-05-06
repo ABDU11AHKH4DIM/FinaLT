@@ -48,6 +48,30 @@ void BudgetManager::createNewBudget()
 	currentBudget = new Budget(budName, limit);
 }
 
+void BudgetManager::editBudget()
+{
+	std::cout << "\n=== Edit name ===\n";
+    std::string name;
+    std::cout << "\nEnter name: ";
+    std::getline(std::cin, name);
+    currentBudget->setName(name);
+    
+    std::cout << "\n=== Edit limit ===\n";
+    double limit;
+    std::cout << "\nEnter limit: ";
+    std::cin >> limit;
+    
+    while (std::cin.fail())
+    {
+    	std::cin.clear();
+    	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    	std::cout << "\n!!! INVALID INPUT !!!\n\n"
+    			  << "Enter limit: ";
+    	std::cin >> limit;
+	}
+    currentBudget->setLimit(limit);
+}
+
 void BudgetManager::executeCommand(Command* cmd)
 {
 	while ((int)history.size() > cursor + 1)	// casting history.size() to int because it returns an unsigned int, as cursor is signed. 

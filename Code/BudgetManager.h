@@ -27,6 +27,7 @@ class BudgetManager  // INVOKER for command pattern
 		static BudgetManager& getInstance();  				// a static mathod to call for
 		Budget* getBudget();
 		void createNewBudget();
+		void editBudget();
 
 // 		COMMANDS
 		
