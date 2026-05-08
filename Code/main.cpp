@@ -18,22 +18,22 @@ int main()
 	
 	BudgetManager& manager = BudgetManager::getInstance();  // used a reference because it points to the same instance. Without it, the copy constructor will be invoked, which has been deleted for this class
 	
+	manager.loadData();
+	Budget* currentBudget = manager.getBudget();
+	
+	if (currentBudget == nullptr)
+	{
+		std::cout << "\nPlease, add a budget to start using this app.\n";       
+        manager.createNewBudget();  					// addBudget handles the amount
+        currentBudget = manager.getBudget();
+	}
+	
 	// MAIN MENU
 	char choice;
 	bool menuFlag = true;									// used a flag so that the prgram can be terminated from inside a switch case
 	
 	while (menuFlag)
 	{
-		Budget* currentBudget = manager.getBudget();
-		
-		if (currentBudget == nullptr)
-		{
-			std::cout << "\nPlease, add a budget to start using this app.\n";
-                
-            manager.createNewBudget();  					// addBudget handles the amount
-            currentBudget = manager.getBudget();
-		}
-		
 		std::cout << std::left
 				  << "\nBudget Name: " << std::setw(20) << (currentBudget != nullptr ? currentBudget->getName() : "NULL" )
 				  << "| "
@@ -53,6 +53,7 @@ int main()
 		switch (choice)
         {
             case '0':
+            	manager.saveData();
                 menuFlag = false;
                 break;
             

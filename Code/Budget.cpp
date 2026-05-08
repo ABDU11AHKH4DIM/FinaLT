@@ -44,6 +44,11 @@ double Budget::getRemaining()
 	return limit - getTotalSpent();
 }
 
+const std::vector<Transaction*>& Budget::getTransactionVctr()	// this method is used for data persistence. It returns a constant reference to transactionVctr
+{
+	return transactionVctr;
+}
+
 void Budget::listTransaction()
 {
 	if (transactionVctr.empty())
@@ -55,7 +60,7 @@ void Budget::listTransaction()
 		{
 		std::cout << "\n" << std::left << std::setw(25) << x->getName() 
 				  << "| PKR " << std::setw(10) << x->getAmount()
-				  << "| " << std::setw(26) << x->getTimeOfCreation();
+				  << "| " << std::setw(26) << x->getTimestamp();
 		}
 	}
 }

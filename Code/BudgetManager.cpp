@@ -1,4 +1,5 @@
 #include "BudgetManager.h"
+#include <sstream>
 
 BudgetManager::BudgetManager()	{}									// private constructor to prevent initialization in main()
 
@@ -19,6 +20,70 @@ BudgetManager& BudgetManager::getInstance()  				// a static mathod to call for
 Budget* BudgetManager::getBudget()
 {
 	return currentBudget;
+}
+
+void BudgetManager::saveData()
+{
+	std::ofstream saveData{"UserData.csv"};
+	
+	if (!saveData)
+	{
+		std::cout << "\n!!! ERROR: COULD NOT SAVE !!!\n";
+		return;
+	}
+	
+	saveData << currentBudget->getName() << "," << currentBudget->getLimit() << "\n";		// first row is always the budget
+		
+	saveData << "label,amount,timestamp\n";			// second row is the column names for the transactions
+	
+	for (auto* i : currentBudget->getTransactionVctr())
+	{
+		saveData << i->getName() << "," << i->getAmount() << "," << i->getTimeInSeconds() << "\n";
+	}
+	
+	saveData.close();
+}
+
+void BudgetManager::loadData()
+{
+	std::ifstream saveData{"UserData.csv"};
+	
+	if (!saveData)
+	{
+		std::cout << "\n!!! ERROR: COULD NOT LOAD TRANSACTIONS !!!\n";
+		return;
+	}
+		
+	std::string line;						// each line in the csv file
+	
+	if (std::getline(saveData, line))
+	{
+		std::stringstream ss(line);
+		
+		std::string budgetName, budgetLimitStr;
+		
+		std::getline(ss, budgetName, ',');
+		std::getline(ss, budgetLimitStr);
+		
+		currentBudget = new Budget(budgetName, std::stod(budgetLimitStr));
+	}
+	
+	std::getline(saveData, line);			// skipping the first line because it has the names of each column. the program will crash when trying to convert amountStr to double.
+	
+	while (std::getline(saveData, line))
+	{
+		std::stringstream ss(line);			// turning the string into an input stream
+		std::string nameStr, amountStr, timeStr;
+		
+		std::getline(ss, nameStr, ',');			// comman is the delimiter. getline() will read the nameStr string variable until it reaches a comma. (the comma is what separates each column in the csv file)
+		std::getline(ss, amountStr, ',');		// same as above
+		std::getline(ss, timeStr);				// no delimiter because time is the last column
+		
+		currentBudget->pushTransaction(new Transaction(nameStr, std::stod(amountStr), std::stoll(timeStr)));			// stod = string to double. converting the amountStr to a double
+																														// stoll = string to long long. converting the timeStr to a long long. (std::time_t is usually a long long int)
+	}
+	
+	saveData.close();
 }
 
 void BudgetManager::createNewBudget()

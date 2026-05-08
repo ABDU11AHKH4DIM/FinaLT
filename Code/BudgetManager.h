@@ -1,6 +1,7 @@
 #pragma once
 #include <deque>			// for std::deque
 #include <iostream>			// for input/output
+#include <fstream>			// for file processing
 #include <limits>			// for std::numeric_limits and max()
 #include <string>			// for std::string
 #include "Command.h"
@@ -28,6 +29,9 @@ class BudgetManager  // INVOKER for command pattern
 		Budget* getBudget();
 		void createNewBudget();
 		void editBudget();
+
+		void saveData();
+		void loadData();
 
 // 		COMMANDS
 		

@@ -3,8 +3,10 @@
 
 Transaction::Transaction(std::string name, double amount) : amount(amount), name(name)
 {
-	timeOfCreation = std::time(nullptr);
+	timeInSeconds = std::time(nullptr);
 }
+
+Transaction::Transaction(std::string name, double amount, std::time_t time) : name(name), amount(amount), timeInSeconds(time) {}
 
 double Transaction::getAmount()
 {
@@ -16,7 +18,12 @@ std::string Transaction::getName()
 	return name;
 }
 
-char* Transaction::getTimeOfCreation()
+std::time_t Transaction::getTimeInSeconds()
 {
-	return ctime(&timeOfCreation);					// ctime() return an array of characters
+	return timeInSeconds;
+}
+
+char* Transaction::getTimestamp()
+{
+	return ctime(&timeInSeconds);
 }
