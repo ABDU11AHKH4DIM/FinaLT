@@ -111,6 +111,8 @@ void BudgetManager::createNewBudget()
 	delete currentBudget;
 	
 	currentBudget = new Budget(budName, limit);
+	
+	std::cout << "\n---> BUDGET CREATED SUCCESSFULLY <---\n";
 }
 
 void BudgetManager::editBudget()
@@ -135,6 +137,8 @@ void BudgetManager::editBudget()
     	std::cin >> limit;
 	}
     currentBudget->setLimit(limit);
+    
+    std::cout << "\n---> BUDGET EDITED SUCCESSFULLY <---\n";
 }
 
 void BudgetManager::executeCommand(Command* cmd)

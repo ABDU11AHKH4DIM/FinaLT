@@ -52,7 +52,7 @@ const std::vector<Transaction*>& Budget::getTransactionVctr()	// this method is 
 void Budget::listTransaction()
 {
 	if (transactionVctr.empty())
-		std::cout << "\nNo transactions found!\n";
+		std::cout << "\n!!! NO TRANSACTIONS FOUND !!!\n";
 	
 	else
 	{

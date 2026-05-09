@@ -2,6 +2,7 @@
 #include <limits>			// for std::numeric_limits and max()
 #include <iomanip>
 #include "BudgetManager.h"
+#include <windows.h>
 
 // ============================================================
 // main
@@ -9,12 +10,18 @@
 
 int main()
 {
-	std::cout << "\n"
-			  << std::setfill('=') 
-			  << std::setw(8) << ""
-			  << " FinaLT "
-			  << std::setw(8) << "" << "\n"
-			  << std::setfill(' ');
+	SetConsoleOutputCP(CP_UTF8);
+
+	 std::cout << R"(
+
+                        ███████╗██╗███╗   ██╗ █████╗ ██╗  ████████╗
+                        ██╔════╝██║████╗  ██║██╔══██╗██║  ╚══██╔══╝
+                        █████╗  ██║██╔██╗ ██║███████║██║     ██║   
+                        ██╔══╝  ██║██║╚██╗██║██╔══██║██║     ██║   
+                        ██║     ██║██║ ╚████║██║  ██║███████╗██║   
+                        ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚═╝   
+
+                    )"; 
 	
 	BudgetManager& manager = BudgetManager::getInstance();  // used a reference because it points to the same instance. Without it, the copy constructor will be invoked, which has been deleted for this class
 	
@@ -35,15 +42,14 @@ int main()
 	while (menuFlag)
 	{
 		std::cout << std::left
-				  << "\nBudget Name: " << std::setw(20) << (currentBudget != nullptr ? currentBudget->getName() : "NULL" )
+				  << "\nBudget Name: " << std::setw(16) << (currentBudget != nullptr ? currentBudget->getName() : "NULL" )
 				  << "| "
-				  << std::setw(8)
-				  << "PKR " << currentBudget->getRemaining() << " left of PKR " << currentBudget->getLimit()
-				  << "(PKR " << currentBudget->getTotalSpent() << " spent)\n";
+				  << "PKR " << std::setw(8) << currentBudget->getRemaining() << " left of PKR " << currentBudget->getLimit()
+				  << " (PKR " << currentBudget->getTotalSpent() << " spent)\n";
 		
 		std::cout << "\n---- CHOOSE AN OPTION ----\n\n"
 				  << "1. Add a new transaction \t 2. Delete a transaction \t 3. List all Transaction\n"
-				  << "4. Edit Budget\n"
+				  << "4. Edit Budget \t 5. Create a new budget\n"
 				  << "U. Undo \t R. Redo\n"
 				  << "0. EXIT PROGRAM\n";
 		
@@ -95,6 +101,12 @@ int main()
             	manager.editBudget();
             }
             break;
+            
+            case '5':
+            {
+            	manager.createNewBudget();
+			}
+			break;
             
             case 'u':
             case 'U':
