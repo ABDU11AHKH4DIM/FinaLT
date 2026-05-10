@@ -27,7 +27,7 @@ void Budget::setCurrency(std::string user_currency)
 
 std::string Budget::getCurrency()
 {
-    return Currency;
+    return toupperString(Currency);
 }
 
 double Budget::getLimit()
