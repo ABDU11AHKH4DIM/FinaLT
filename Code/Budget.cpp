@@ -2,7 +2,7 @@
 #include "Budget.h"
 #include "utils.h"
 
-Budget::Budget(std::string name, double limit) : name(name), limit(limit) {}
+Budget::Budget(std::string name, double limit, std::string bud_currency) : name(name), limit(limit), Currency(bud_currency) {}
 
 Budget::~Budget()
 {
@@ -18,6 +18,11 @@ std::string Budget::getName()
 void Budget::setName(std::string name)
 {
 	this -> name = name;
+}
+
+std::string Budget::setCurrency(std::string user_currency)
+{
+	Currency = user_currency;
 }
 
 double Budget::getLimit()
@@ -48,6 +53,27 @@ const std::vector<Transaction*>& Budget::getTransactionVctr()	// this method is 
 {
 	return transactionVctr;
 }
+
+static std::string Budget::ValidCurrency()
+{
+	while(true)
+	{   
+		std::string currency;
+		std::cout <<"\nEnter Currency (USD or PKR): ";
+		std::getline(std::cin, currency);
+		try
+		{
+		      if(tolowerString(currency) != "usd" && tolowerString(currency) != "pkr")
+		      	throw std::invalid_argument("Invalid Currency Enter USD or PKR only");	
+			  return currency;
+		}
+			catch(const std::invalid_argument& ex)
+			{
+		      std::cerr << "Error: " << ex.what();
+			}
+	}
+}
+
 
 void Budget::listTransaction()
 {
