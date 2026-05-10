@@ -91,6 +91,8 @@ void BudgetManager::createNewBudget()
 	std::string budName;
 	std::cout << "\nEnter budget name: ";
 	std::getline(std::cin, budName);
+
+	std::string bud_Currency = currentBudget -> ValidCurrency();
 	
 	double limit;
 	std::cout << "\nEnter budget limit: ";
@@ -110,7 +112,7 @@ void BudgetManager::createNewBudget()
 	cursor = -1;
 	delete currentBudget;
 	
-	currentBudget = new Budget(budName, limit);
+	currentBudget = new Budget(budName, limit, bud_Currency);
 }
 
 void BudgetManager::editBudget()
@@ -120,6 +122,10 @@ void BudgetManager::editBudget()
     std::cout << "\nEnter name: ";
     std::getline(std::cin, name);
     currentBudget->setName(name);
+
+	std::cout << "\n=== Edit Currency ===\n";
+    std::string validcurr = Budget::ValidCurrency();
+	currentBudget->setCurrency(validcurr);
     
     std::cout << "\n=== Edit limit ===\n";
     double limit;
