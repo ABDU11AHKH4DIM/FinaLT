@@ -9,3 +9,13 @@ std::string tolowerString(std::string str)
 	
 	return str;
 }
+std::string toupperString(std::string str)
+{
+	for (auto& y : str)
+	{
+		y = toupper(x);
+	}
+	
+	return str;
+}
+
