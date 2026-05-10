@@ -14,6 +14,7 @@ class Budget  // RECEIVER
 {
 	private:
 		std::string name;
+        std::string Currency;
 		double limit;
 		std::vector <Transaction*> transactionVctr;	// a vector to store pointers to 'Transaction' objects
 	
@@ -24,7 +25,11 @@ class Budget  // RECEIVER
 		std::string getName();
 		
 		void setName(std::string name);
-		
+
+        void setCurrency(std::user_currency);
+
+		std::string getCurrency();
+
 		double getLimit();
 		
 		void setLimit(double limit);
@@ -32,6 +37,8 @@ class Budget  // RECEIVER
 		double getTotalSpent();						// on the fly calculations help reduce the code because the changes are automatically done
 		
 		double getRemaining();
+
+        std::string validcurrency();
 		
 		const std::vector<Transaction*>& getTransactionVctr();
 		
