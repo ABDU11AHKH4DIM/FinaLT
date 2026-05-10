@@ -1,6 +1,6 @@
 #include "Command.h"
 
-AddTransactionCommand::AddTransactionCommand(Budget* b, Transaction* t) : receiver(b), transaction(t) {}
+AddTransactionCommand::AddTransactionCommand(Budget* b, Transaction* t) : receiver(b), transaction(t), inBudget(false) {}
 
 AddTransactionCommand::~AddTransactionCommand()		// this class conditionally owns Transaction
 {
@@ -21,7 +21,7 @@ void AddTransactionCommand::undo()
 	inBudget = false;
 }
 
-DeleteTransactionCommand::DeleteTransactionCommand(Budget* b, Transaction* t) : receiver(b), transaction(t) {}
+DeleteTransactionCommand::DeleteTransactionCommand(Budget* b, Transaction* t) : receiver(b), transaction(t), inBudget(true) {}
 
 DeleteTransactionCommand::~DeleteTransactionCommand()		// this class conditionally owns Transaction
 {

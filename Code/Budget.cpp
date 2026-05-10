@@ -83,7 +83,7 @@ static std::string Budget::ValidCurrency()
 void Budget::listTransaction()
 {
 	if (transactionVctr.empty())
-		std::cout << "\nNo transactions found!\n";
+		std::cout << "\n!!! NO TRANSACTIONS FOUND !!!\n";
 	
 	else
 	{

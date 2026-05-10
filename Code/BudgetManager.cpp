@@ -141,6 +141,8 @@ void BudgetManager::editBudget()
     	std::cin >> limit;
 	}
     currentBudget->setLimit(limit);
+    
+    std::cout << "\n---> BUDGET EDITED SUCCESSFULLY <---\n";
 }
 
 void BudgetManager::executeCommand(Command* cmd)
