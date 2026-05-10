@@ -32,7 +32,7 @@ void BudgetManager::saveData()
 		return;
 	}
 	
-	saveData << currentBudget->getName() << "," << currentBudget->getLimit() << "\n";		// first row is always the budget
+	saveData << currentBudget->getName() << "," << currentBudget->getLimit() << "," << currentBudget->getCurrency() \n";		// first row is always the budget
 		
 	saveData << "label,amount,timestamp\n";			// second row is the column names for the transactions
 	
@@ -60,12 +60,13 @@ void BudgetManager::loadData()
 	{
 		std::stringstream ss(line);
 		
-		std::string budgetName, budgetLimitStr;
+		std::string budgetName, budgetLimitStr, budgetCurrency;
 		
 		std::getline(ss, budgetName, ',');
-		std::getline(ss, budgetLimitStr);
+		std::getline(ss, budgetLimitStr, ',');
+		std::getline(ss, budgetCurrency);
 		
-		currentBudget = new Budget(budgetName, std::stod(budgetLimitStr));
+		currentBudget = new Budget(budgetName, std::stod(budgetLimitStr), budgetCurrency);
 	}
 	
 	std::getline(saveData, line);			// skipping the first line because it has the names of each column. the program will crash when trying to convert amountStr to double.
