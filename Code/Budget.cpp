@@ -20,9 +20,14 @@ void Budget::setName(std::string name)
 	this -> name = name;
 }
 
-std::string Budget::setCurrency(std::string user_currency)
+void Budget::setCurrency(std::string user_currency)
 {
 	Currency = user_currency;
+}
+
+std::string Budget::getCurrency()
+{
+    return Currency;
 }
 
 double Budget::getLimit()
