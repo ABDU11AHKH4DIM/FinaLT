@@ -1,8 +1,8 @@
 #include <iostream>			// for input/output
 #include <limits>			// for std::numeric_limits and max()
-#include <iomanip>
+#include <iomanip>			// for formatting text
 #include "BudgetManager.h"
-#include <windows.h>
+#include <windows.h>		// for SetConsoleOutput()
 
 // ============================================================
 // main
