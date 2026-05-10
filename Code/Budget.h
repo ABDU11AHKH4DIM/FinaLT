@@ -19,7 +19,7 @@ class Budget  // RECEIVER
 		std::vector <Transaction*> transactionVctr;	// a vector to store pointers to 'Transaction' objects
 	
 	public:
-		Budget(std::string name, double limit);
+		Budget(std::string name, double limit,std::string Currency);
 		~Budget();
 		
 		std::string getName();
