@@ -38,8 +38,8 @@ int main()
 				  << "\nBudget Name: " << std::setw(20) << (currentBudget != nullptr ? currentBudget->getName() : "NULL" )
 				  << "| "
 				  << std::setw(8)
-				  << "PKR " << currentBudget->getRemaining() << " left of PKR " << currentBudget->getLimit()
-				  << "(PKR " << currentBudget->getTotalSpent() << " spent)\n";
+				  << currentBudget->getCurrency() <<" "<< currentBudget->getRemaining() <<" "<< currentBudget->getCurrency() << currentBudget->getLimit()
+				  << "( "<< currentBudget->getCurrency() << currentBudget->getTotalSpent() << " spent)\n";
 		
 		std::cout << "\n---- CHOOSE AN OPTION ----\n\n"
 				  << "1. Add a new transaction \t 2. Delete a transaction \t 3. List all Transaction\n"
