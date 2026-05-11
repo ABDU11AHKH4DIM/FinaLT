@@ -90,7 +90,7 @@ void Budget::listTransaction()
 		for (auto* x : transactionVctr)
 		{
 		std::cout << "\n" << std::left << std::setw(25) << x->getName() 
-				  << "| PKR " << std::setw(10) << x->getAmount()
+				  << "| " <<getCurrency() << std::setw(10) << x->getAmount()
 				  << "| " << std::setw(26) << x->getTimestamp();
 		}
 	}
